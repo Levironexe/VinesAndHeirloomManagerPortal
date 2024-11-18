@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import { Home, Users, Package, Truck, CreditCard, UserCog, Clock } from 'lucide-react';
+import { Users, Package, Truck, CreditCard, UserCog, Clock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 

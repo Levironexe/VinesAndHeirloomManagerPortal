@@ -6,5 +6,4 @@ const page = () => {
     <LoginPage/>
   )
 }
-
 export default page
