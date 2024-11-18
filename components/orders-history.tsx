@@ -119,7 +119,7 @@ const OrderHistory = () => {
             <thead>
               <tr className="bg-gray-50">
                 <th className="border p-2 text-left">Order ID</th>
-                <th className="border p-2 text-left">Customer</th>
+                <th className="border p-2 text-left">Customer ID</th>
                 <th className="border p-2 text-left">Date</th>
                 <th className="border p-2 text-left">Items</th>
                 <th className="border p-2 text-left">Amount</th>
@@ -134,7 +134,7 @@ const OrderHistory = () => {
               {filteredOrders.map(order => (
                 <tr key={order.id} className="hover:bg-gray-50">
                   <td className="border p-2">{order.order_id}</td>
-                  <td className="border p-2">{(order as any).customers?.name}</td>
+                  <td className="border p-2">{order.customer_id}</td>
                   <td className="border p-2">{new Date(order.date).toLocaleDateString()}</td>
                   <td className="border p-2">{order.total_items}</td>
                   <td className="border p-2">${order.total_amount.toFixed(2)}</td>

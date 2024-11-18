@@ -1,4 +1,3 @@
-import { LeftPanel } from '@/components'
 import ProductInventory from '@/components/product-inventory'
 import React from 'react'
 

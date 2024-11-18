@@ -1,9 +1,10 @@
-import {LoginPage} from "@/components/index";
+import { LoginPage } from '@/components/index'
+import React from 'react'
 
-export default function Home() {
+const page = () => {
   return (
-      <main className="bg-white">
-        <LoginPage/>
-      </main>
-  );
+    <LoginPage/>
+  )
 }
+
+export default page
