@@ -21,19 +21,19 @@ const supabase = createClient(
   }
 );
 
-interface Product {
-  id: string;
-  sku: string;
-  name: string;
-  category: string;
-  price: number;
-  weight: number;
-  stock: number;
-  supplier: string;
+interface user {
+    user_id: string,
+    created_at: string,
+    username: string,
+    email: string,
+    update_at: string,
+    password_hash: string,
+    role: string,
+    locationid: string,
 }
 
-const AdminDashboard = () => {
-  const [products, setProducts] = useState<Product[] | null>(null);
+const UserPage = () => {
+  const [userList, setUserList] = useState<user[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [pageDecimal, setPageDecimal] = useState(0);
@@ -45,31 +45,52 @@ const AdminDashboard = () => {
     setPage((decimal + 1) * 15);
   };
 
+  const handleUpdateCallStatus = async (user_id: string, status: boolean) => {
+    try {
+      
+      setUserList(prevList => 
+        prevList?.map(item =>
+          item.user_id === user_id ? {...item, isCalled: !status} : item
+        ) || null
+      );
+
+      setIsLoading(true)
+      const {data, error} = await supabase
+      .from("users")
+      .update({isCalled: !status})
+      .eq("user_id", user_id)
+
+      if (error) throw error;
+
+      setIsLoading(false)
+
+    } catch (error) {
+      console.error('Update error:', error);
+      setIsLoading(false)
+
+    }
+  }
+
   const handlePageDecimalDecrement = (decimal: number) => {
     setPageDecimal(decimal - 1);
     setPage((decimal - 1) * 15);
   };
 
-  const fetchProducts = async (page: number) => {
+  const fetchUsers = async (page: number) => {
     try {
       const start = page;
       const end = page + 14;
-      console.log('Fetching products...', { start, end });
       
       const { data, error } = await supabase
-        .from('products')
+        .from('users')
         .select('*')
         .range(start, end)
-      if (error) {
-        console.error('Database error:', error);
-        throw error;
-      }
 
-      console.log('Data fetched:', data);
-      setProducts(data || []);
+      if (error) throw error;
+      setUserList(data || []);
     } catch (error) {
       console.error('Fetch error:', error);
-      setProducts(null);
+      setUserList(null);
     } finally {
       setIsLoading(false);
     }
@@ -78,35 +99,18 @@ const AdminDashboard = () => {
   useEffect(() => {
     const getCount = async () => {
       const { count } = await supabase
-        .from('products')
+        .from('orders')
         .select('*', { count: 'exact' });
       setTotalCount(count || 0);
     };
     getCount();
-    fetchProducts(page);
+    fetchUsers(page);
   }, [page]);
 
-  const handleDelete = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      fetchProducts(page);
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    }
-  };
-
-  if (!products) return <LoadingPage/>;
+  if (!setUserList) return <LoadingPage/>;
   if (isLoading) return <LoadingPage/>;
 
-  const filteredProducts = products.filter(product => 
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
 
   return (
     <div className="flex min-h-screen bg-gray-100 text-black">
@@ -114,56 +118,50 @@ const AdminDashboard = () => {
       <div className="flex-1 p-4">
         <div className="bg-white p-4 rounded shadow">
           <div className="flex justify-between mb-4">
-            <h1 className="text-xl font-bold">Inventory Management</h1>
+            <h1 className="text-xl font-bold">Table Reservation</h1>
             <div className="flex gap-2">
               <input 
                 type="text" 
-                placeholder="Search" 
-                className="border rounded px-2 py-1"
+                placeholder="Search by order ID or status" 
+                className="border rounded px-2 py-1 w-64"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <button className="bg-blue-500 text-black px-3 py-1 rounded">
-                Add New
+                Export
               </button>
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="border p-2 text-left">SKU</th>
-                  <th className="border p-2 text-left">Name</th>
-                  <th className="border p-2 text-left">Category</th>
-                  <th className="border p-2 text-left">Price</th>
-                  <th className="border p-2 text-left">Stock</th>
-                  <th className="border p-2 text-left">Supplier</th>
-                  <th className="border p-2 text-left">Actions</th>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-50">
+                <th className="border p-2 text-left">ID</th>
+                <th className="border p-2 text-left">Email</th>
+                <th className="border p-2 text-left">Username</th>
+                <th className="border p-2 text-left">Password</th>
+                <th className="border p-2 text-left">Role</th>
+                <th className="border p-2 text-left">Location</th>
+                <th className="border p-2 text-left">Created at</th>
+                <th className="border p-2 text-left">Updated at</th>
+              </tr>
+            </thead>
+            <tbody>
+              { userList != null ? userList.map(users => (
+                <tr key={users.user_id} className="hover:bg-gray-50">
+                  <td className="border p-2">{users.user_id}</td>
+                  <td className="border p-2">{users.email}</td>
+                  <td className="border p-2">{users.username}</td>
+                  <td className="border p-2">{users.password_hash}</td>
+                  <td className="border p-2">{users.role}</td>
+                  <td className="border p-2">{users.locationid}</td>
+                  <td className="border p-2">{users.created_at}</td>
+                  <td className="border p-2">{users.update_at}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredProducts.map(product => (
-                  <tr key={product.id} className="hover:bg-gray-50">
-                    <td className="border p-2">{product.sku}</td>
-                    <td className="border p-2">{product.name}</td>
-                    <td className="border p-2">{product.category}</td>
-                    <td className="border p-2">${product.price}</td>
-                    <td className="border p-2">{product.stock}</td>
-                    <td className="border p-2">{product.supplier}</td>
-                    <td className="border p-2">
-                      <button 
-                        className="bg-red-500 text-white px-2 py-1 rounded mr-2"
-                        onClick={() => handleDelete(product.id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
+              )): <p>user list is empty</p>}
+            </tbody>
+          </table>
             <div className="mt-4 flex justify-between items-center">
               <span>
                 Showing {page + 1}-{Math.min(page + 15, totalCount)} of {totalCount}
@@ -192,4 +190,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default UserPage;

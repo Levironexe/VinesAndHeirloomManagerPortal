@@ -1,9 +1,9 @@
-import { TransportManagement } from '@/components'
+import { UserPage } from '@/components/index'
 import React from 'react'
 
 const page = () => {
   return (
-    <TransportManagement/>
+    <UserPage/>
   )
 }
 

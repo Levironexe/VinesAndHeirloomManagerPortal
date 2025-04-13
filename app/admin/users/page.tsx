@@ -1,9 +1,9 @@
-import { OrderHistory } from '@/components/index'
+import { UserPage } from '@/components/index'
 import React from 'react'
 
 const page = () => {
   return (
-    <OrderHistory/>
+    <UserPage/>
   )
 }
 

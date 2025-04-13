@@ -21,22 +21,24 @@ const supabase = createClient(
   }
 );
 
-interface Order {
-  id: string;
-  order_id: string;
-  customer_id: string;
-  date: string;
-  total_items: number;
-  total_amount: number;
-  status: string;
-  payment_status: string;
-  tracking_id: string;
-  delivery_address: string;
-  expected_delivery: string;
+interface reservationList {
+  id: string,
+  created_at: string,
+  name: string,
+  phoneNumber: number,
+  email: number,
+  startTime: string,
+  guests: number,
+  notes: string,
+  tag: string[],
+  startDate: string,
+  locationAddress: string,
+  locationName: string,
+  isCalled: boolean,
 }
 
-const OrderHistory = () => {
-  const [orders, setOrders] = useState<Order[] | null>(null);
+const TableReservationPage = () => {
+  const [reservationList, setReservationList] = useState<reservationList[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [pageDecimal, setPageDecimal] = useState(0);
@@ -47,6 +49,32 @@ const OrderHistory = () => {
     setPageDecimal(decimal + 1);
     setPage((decimal + 1) * 15);
   };
+
+  const handleUpdateCallStatus = async (id: string, status: boolean) => {
+    try {
+      
+      setReservationList(prevList => 
+        prevList?.map(item =>
+          item.id === id ? {...item, isCalled: !status} : item
+        ) || null
+      );
+
+      setIsLoading(true)
+      const {data, error} = await supabase
+      .from("reservationlist")
+      .update({isCalled: !status})
+      .eq("id", id)
+
+      if (error) throw error;
+
+      setIsLoading(false)
+
+    } catch (error) {
+      console.error('Update error:', error);
+      setIsLoading(false)
+
+    }
+  }
 
   const handlePageDecimalDecrement = (decimal: number) => {
     setPageDecimal(decimal - 1);
@@ -59,16 +87,16 @@ const OrderHistory = () => {
       const end = page + 14;
       
       const { data, error } = await supabase
-        .from('orders')
+        .from('reservationlist')
         .select('*')
         .range(start, end)
-        .order('date', { ascending: false });
+        .order('startDate', { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
+      setReservationList(data || []);
     } catch (error) {
       console.error('Fetch error:', error);
-      setOrders(null);
+      setReservationList(null);
     } finally {
       setIsLoading(false);
     }
@@ -85,13 +113,10 @@ const OrderHistory = () => {
     fetchOrders(page);
   }, [page]);
 
-  if (!orders) return <LoadingPage/>;
+  if (!reservationList) return <LoadingPage/>;
   if (isLoading) return <LoadingPage/>;
 
-  const filteredOrders = orders.filter(order => 
-    order.order_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.status.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
 
   return (
     <div className="flex min-h-screen bg-gray-100 text-black">
@@ -99,7 +124,7 @@ const OrderHistory = () => {
       <div className="flex-1 p-4">
         <div className="bg-white p-4 rounded shadow">
           <div className="flex justify-between mb-4">
-            <h1 className="text-xl font-bold">Order History</h1>
+            <h1 className="text-xl font-bold">Table Reservation</h1>
             <div className="flex gap-2">
               <input 
                 type="text" 
@@ -118,52 +143,38 @@ const OrderHistory = () => {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-50">
-                <th className="border p-2 text-left">Order ID</th>
-                <th className="border p-2 text-left">Customer ID</th>
-                <th className="border p-2 text-left">Date</th>
-                <th className="border p-2 text-left">Items</th>
-                <th className="border p-2 text-left">Amount</th>
+                <th className="border p-2 text-left">ID</th>
+                <th className="border p-2 text-left">Quest name</th>
+                <th className="border p-2 text-left">Phone number</th>
+                <th className="border p-2 text-left">Email</th>
+                <th className="border p-2 text-left">Booking time</th>
+                <th className="border p-2 text-left">Booking date</th>
+                <th className="border p-2 text-left">Note</th>
+                <th className="border p-2 text-left">Tags</th>
                 <th className="border p-2 text-left">Status</th>
-                <th className="border p-2 text-left">Payment</th>
-                <th className="border p-2 text-left">Tracking</th>
-                <th className="border p-2 text-left">Expected Delivery</th>
-                <th className="border p-2 text-left">Actions</th>
+                <th className="border p-2 text-left">Created at</th>
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map(order => (
-                <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="border p-2">{order.order_id}</td>
-                  <td className="border p-2">{order.customer_id}</td>
-                  <td className="border p-2">{new Date(order.date).toLocaleDateString()}</td>
-                  <td className="border p-2">{order.total_items}</td>
-                  <td className="border p-2">${order.total_amount.toFixed(2)}</td>
-                  <td className="border p-2">
-                    <span className={`px-2 py-1 rounded-full text-sm 
-                      ${order.status === 'Delivered' ? 'bg-green-100 text-green-800' : 
-                        order.status === 'Processing' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-blue-100 text-blue-800'}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="border p-2">
-                    <span className={`px-2 py-1 rounded-full text-sm 
-                      ${order.payment_status === 'Completed' ? 'bg-green-100 text-green-800' : 
-                        order.payment_status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'}`}>
-                      {order.payment_status}
-                    </span>
-                  </td>
-                  <td className="border p-2">{order.tracking_id || 'N/A'}</td>
-                  <td className="border p-2">{order.expected_delivery ? new Date(order.expected_delivery).toLocaleDateString() : 'N/A'}</td>
-                  <td className="border p-2">
-                    <button className="bg-blue-500 text-white px-2 py-1 rounded mr-2">
-                      Details
-                    </button>
-                    <button className="bg-gray-500 text-white px-2 py-1 rounded">
-                      Invoice
+              {reservationList.map(reservation => (
+                <tr key={reservation.id} className="hover:bg-gray-50">
+                  <td className="border p-2">{reservation.id}</td>
+                  <td className="border p-2">{reservation.name}</td>
+                  <td className="border p-2">{reservation.phoneNumber}</td>
+                  <td className="border p-2">${reservation.email}</td>
+                  <td className="border p-2">{reservation.startTime}</td>
+                  <td className="border p-2">{reservation.startDate}</td>
+                  <td className="border p-2">{reservation.notes}</td>
+                  <td className="border p-2">{reservation.tag}</td>
+                  {/* <td className="border p-2">{order.tracking_id || 'N/A'}</td>
+                  <td className="border p-2">{order.expected_delivery ? new Date(order.expected_delivery).toLocaleDateString() : 'N/A'}</td> */}
+                  <td className="border">
+                    <button className={` text-white px-2 py-1 rounded mr-2 ${reservation.isCalled? "bg-green-500" : "bg-red-500"}`} 
+                    onClick={() => handleUpdateCallStatus(reservation.id, reservation.isCalled)}>
+                      {reservation.isCalled? "Called" : "Not called"}
                     </button>
                   </td>
+                  <td className='border p-2'>{reservation.created_at}</td>
                 </tr>
               ))}
             </tbody>
@@ -196,4 +207,4 @@ const OrderHistory = () => {
   );
 };
 
-export default OrderHistory;
+export default TableReservationPage;
