@@ -6,6 +6,8 @@ import EmployeesPage from './employees-page'
 import LoginPage from './login-page'
 import LoadingPage from './loading-page'
 import UserPage from './users-page'
+import TableStatusPage from './stable-status'
+import RevenueDashboardPage from './revenue'
 
 export {
     Navbar,
@@ -15,4 +17,6 @@ export {
     LoginPage,
     LoadingPage,
     UserPage,
+    TableStatusPage,
+    RevenueDashboardPage
 }

@@ -16,8 +16,9 @@ const allPanels: NavItemProps[] = [
   {id: 2, icon: Users, text: "Table Reservation", path: "/admin/table-reservation"},
   {id: 3, icon: Users, text: "Users", path: "/admin/users"},
   {id: 4, icon: Package, text: "Product & Inventory", path: "/admin/product-inventory"},
-  {id: 5, icon: Truck, text: "Transport Management", path: "/admin/transport-management"},
   {id: 6, icon: CreditCard, text: "Revenue", path: "/admin/revenue"},
+  {id: 7, icon: CreditCard, text: "Table Status", path: "/admin/table-status"},
+
 ];
 
 const NavItem: React.FC<NavItemProps> = ({ icon: Icon, text, path }) => {
@@ -40,10 +41,10 @@ interface RolePanelConfig {
 
 // Define which panels each role can access
 const rolePanelConfig: RolePanelConfig = {
-  "manager": [2, 4, 5, 6], // Employees, Table Reservation, Product & Inventory, Revenue
-  "staff": [2, 4], // Table Reservation, Product & Inventory
-  "owner": [1, 2, 3, 4, 5, 6], // All panels
-  "admin": [1, 2, 3, 4, 5, 6] // All panels (fallback)
+  "manager": [2, 4, 6, 7], // Employees, Table Reservation, Product & Inventory, Revenue
+  "staff": [2, 4, 7], // Table Reservation, Product & Inventory
+  "owner": [1, 2, 3, 4, 6, 7], // All panels
+  "admin": [1, 2, 3, 4, 6] // All panels (fallback)
 };
 
 const LeftPanel = () => {

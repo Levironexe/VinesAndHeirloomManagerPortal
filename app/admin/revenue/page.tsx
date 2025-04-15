@@ -1,9 +1,9 @@
-import { EmployeesPage } from '@/components/index'
+import { RevenueDashboardPage } from '@/components/index'
 import React from 'react'
 
 const page = () => {
   return (
-    <EmployeesPage/>
+    <RevenueDashboardPage/>
   )
 }
 export default page

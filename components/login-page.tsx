@@ -58,28 +58,28 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      setErrorMessage("An error occurred while logging in");
+      setErrorMessage("Wrong username or password");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-100 via-blue-50 to-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-orange-100 via-orange-50 to-white">
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md relative overflow-hidden">
-          {/* Red Key Design */}
-          <div className="absolute -left-40 -top-32 w-96 h-96 bg-red-600 rounded-full opacity-90 z-0" />
+          {/* gray Key Design */}
+          <div className="absolute -left-40 -top-32 w-96 h-96 bg-gray-600 rounded-full opacity-90 z-0" />
           
           <div className="relative z-10">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Login</h2>
             <form className="space-y-4" onSubmit={handleLogin}>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <label className="block text-sm font-medium text-black mb-1">Username</label>
                 <input 
                   type="text"
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-md focus:ring-2  text-black"
                   placeholder="Enter username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -88,10 +88,10 @@ const LoginPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-black mb-1">Password</label>
                 <input 
                   type="password"
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-md focus:ring-2  text-black"
                   placeholder="Enter password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -101,7 +101,7 @@ const LoginPage = () => {
 
               <button 
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 
+                className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 
                          transition duration-200 font-medium"
                 disabled={isLoading}
               >
@@ -110,7 +110,7 @@ const LoginPage = () => {
             </form>
 
             {errorMessage && (
-              <p className="mt-4 text-sm text-red-600">
+              <p className="mt-4 text-sm text-gray-600">
                 {errorMessage}
               </p>
             )}

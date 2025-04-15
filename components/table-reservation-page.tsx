@@ -133,7 +133,7 @@ const TableReservationPage = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <button className="bg-blue-500 text-black px-3 py-1 rounded">
+              <button className="bg-orange-500 text-white px-3 py-1 rounded">
                 Export
               </button>
             </div>

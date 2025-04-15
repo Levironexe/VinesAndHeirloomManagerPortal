@@ -146,7 +146,7 @@ const EmployeesPage = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <button className="bg-blue-500 text-white px-3 py-1 rounded">
+              <button className="bg-orange-500 text-white px-3 py-1 rounded">
                 Export
               </button>
             </div>
@@ -180,7 +180,7 @@ const EmployeesPage = () => {
                   <td className="border p-2">{employee.email}</td>
                   <td className="border p-2">{new Date(employee.startDate).toLocaleDateString()}</td>
                   <td className="border p-2">
-                    <span className={`px-2 py-1 rounded-full text-xs text-white ${employee.employmentStatus === 'full-time' ? 'bg-green-500' : employee.employmentStatus === 'part-time' ? 'bg-blue-500' : 'bg-orange-500'}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs text-white ${employee.employmentStatus === 'full-time' ? 'bg-green-500' : employee.employmentStatus === 'part-time' ? 'bg-orange-500' : 'bg-orange-500'}`}>
                       {employee.employmentStatus}
                     </span>
                   </td>
