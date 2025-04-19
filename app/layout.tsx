@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/index";
 import {Pinyon_Script} from "next/font/google";
+import RouteGuard from "@/components/route-guard";
 
 const pinyon_script = Pinyon_Script({
   variable: "--font-pinyon-script",
@@ -35,8 +36,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable}  ${pinyon_script.variable}  antialiased`}
       >
+        <RouteGuard>
         <Navbar/>
         {children}
+        </RouteGuard>
       </body>
     </html>
   );

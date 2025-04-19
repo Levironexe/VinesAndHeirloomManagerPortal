@@ -46,7 +46,7 @@ const Navbar = () => {
     <div className='bg-white w-full'>
         <div>
             <div className=' flex justify-between items-center py-4 mx-auto px-3 sm:px-4 lg:px-4'>            
-              <div className='text-5xl bg-gradient-to-r from-orange-700 to-orange-500 bg-clip-text text-transparent font-pinyon'>Heirloom & Vines <span className='text-white bg-black px-4 font-sans font-normal text-3xl rounded-xl'>PORTAL</span></div>
+              <div className='flex items-start gap-4 text-5xl bg-gradient-to-r from-orange-700 to-orange-500 bg-clip-text text-transparent font-pinyon'><p>Heirloom & Vines</p> <span className='text-white bg-black px-4 font-sans font-normal text-3xl rounded-xl'>PORTAL</span></div>
               {isLoggedIn && (
                     <div className='flex gap-4 items-center'>
                       <p className='text-black  text-lg py-2 px-4 bg-orange-500 rounded-xl font-bold border-2 border-black'>User: {userRole}</p>

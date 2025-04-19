@@ -8,6 +8,8 @@ import LoadingPage from './loading-page'
 import UserPage from './users-page'
 import TableStatusPage from './stable-status'
 import RevenueDashboardPage from './revenue'
+import ChooseRolePage from './choose-role'
+import OrderItemsPage from './ordered-item'
 
 export {
     Navbar,
@@ -18,5 +20,7 @@ export {
     LoadingPage,
     UserPage,
     TableStatusPage,
-    RevenueDashboardPage
+    ChooseRolePage,
+    RevenueDashboardPage,
+    OrderItemsPage
 }

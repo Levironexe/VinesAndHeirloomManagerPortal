@@ -1,9 +1,9 @@
-import { LoginPage } from '@/components/index'
+import { ChooseRolePage } from '@/components/index'
 import React from 'react'
 
 const page = () => {
-  return (
-    <LoginPage/>
+  return (  
+    <ChooseRolePage/>
   )
 }
 export default page

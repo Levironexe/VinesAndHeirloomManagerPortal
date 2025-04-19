@@ -11,15 +11,28 @@ interface NavItemProps {
   path: string;
 }
 
-const allPanels: NavItemProps[] = [
-  {id: 1, icon: Users, text: "Employees", path: "/admin/employees"},
-  {id: 2, icon: Users, text: "Table Reservation", path: "/admin/table-reservation"},
-  {id: 3, icon: Users, text: "Users", path: "/admin/users"},
-  {id: 4, icon: Package, text: "Product & Inventory", path: "/admin/product-inventory"},
-  {id: 6, icon: CreditCard, text: "Revenue", path: "/admin/revenue"},
-  {id: 7, icon: CreditCard, text: "Table Status", path: "/admin/table-status"},
+// Define base paths for each panel
+const panelPaths = {
+  1: "/employees",
+  2: "/table-reservation",
+  3: "/users",
+  4: "/product-inventory",
+  6: "/revenue",
+  7: "/table-status",
+  8: "/ordered-item",
+};
 
-];
+// Define which panels each role can access
+interface RolePanelConfig {
+  [role: string]: number[]; // Array of panel IDs allowed for each role
+}
+
+const rolePanelConfig: RolePanelConfig = {
+  "manager": [2, 4, 6, 7, 8], // Table Reservation, Product & Inventory, Revenue, Table Status
+  "staff": [2, 4, 7], // Table Reservation, Product & Inventory, Table Status
+  "kitchen": [4, 8], // Product & Inventory
+  "owner": [1, 2, 3, 4, 6, 7, 8], // All panels
+};
 
 const NavItem: React.FC<NavItemProps> = ({ icon: Icon, text, path }) => {
   const pathname = usePathname();
@@ -35,21 +48,10 @@ const NavItem: React.FC<NavItemProps> = ({ icon: Icon, text, path }) => {
   );
 };
 
-interface RolePanelConfig {
-  [role: string]: number[]; // Array of panel IDs allowed for each role
-}
-
-// Define which panels each role can access
-const rolePanelConfig: RolePanelConfig = {
-  "manager": [2, 4, 6, 7], // Employees, Table Reservation, Product & Inventory, Revenue
-  "staff": [2, 4, 7], // Table Reservation, Product & Inventory
-  "owner": [1, 2, 3, 4, 6, 7], // All panels
-  "admin": [1, 2, 3, 4, 6] // All panels (fallback)
-};
-
 const LeftPanel = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [allowedPanelIds, setAllowedPanelIds] = useState<number[]>([]);
+  const [panels, setPanels] = useState<NavItemProps[]>([]);
   
   useEffect(() => {
     // Get user role from localStorage
@@ -72,10 +74,32 @@ const LeftPanel = () => {
     }
   }, []);
 
-  // Filter panels based on user role
-  const getPanelsForCurrentRole = () => {
-    return allPanels.filter(panel => allowedPanelIds.includes(panel.id));
-  };
+  // Generate panels with role-specific paths
+  useEffect(() => {
+    if (userRole) {
+      // Base panel definitions with icons and text
+      const allPanelsDefinition = [
+        {id: 1, icon: Users, text: "Employees"},
+        {id: 2, icon: Users, text: "Table Reservation"},
+        {id: 3, icon: Users, text: "Users"},
+        {id: 4, icon: Package, text: "Product & Inventory"},
+        {id: 6, icon: CreditCard, text: "Revenue"},
+        {id: 7, icon: CreditCard, text: "Table Status"},
+        {id: 8, icon: CreditCard, text: "Ordered Item"},
+
+      ];
+      
+      // Create panels with role-specific paths
+      const rolePanels = allPanelsDefinition
+        .filter(panel => allowedPanelIds.includes(panel.id))
+        .map(panel => ({
+          ...panel,
+          path: `/${userRole}${panelPaths[panel.id as keyof typeof panelPaths]}`
+        }));
+      
+      setPanels(rolePanels);
+    }
+  }, [userRole, allowedPanelIds]);
 
   return (
     <div className="w-64 bg-white shadow-lg p-4">
@@ -88,7 +112,7 @@ const LeftPanel = () => {
         )}
       </div>
       <nav className="space-y-2">
-        {getPanelsForCurrentRole().map((panel) => (
+        {panels.map((panel) => (
           <NavItem 
             key={panel.id}
             id={panel.id}

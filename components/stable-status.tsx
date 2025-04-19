@@ -24,7 +24,7 @@ const supabase = createClient(
 
 interface TableStatus {
   id: number;
-  table_number: number;
+  table_id: number;
   status: 'available' | 'occupied' | 'reserved' | 'maintenance';
   capacity: number;
   last_updated: string;
@@ -51,10 +51,10 @@ const TableStatusPage = () => {
       let query = supabase
         .from('table_status')
         .select('*')
-        .order('table_number', { ascending: true });
+        .order('table_id', { ascending: true });
       
       if (searchTerm) {
-        query = query.or(`table_number.eq.${searchTerm},status.ilike.%${searchTerm}%`);
+        query = query.or(`table_id.eq.${searchTerm},status.ilike.%${searchTerm}%`);
       }
       
       const { data, error, count } = await query;
@@ -110,7 +110,7 @@ const TableStatusPage = () => {
             ? new Date(Date.now() + 90 * 60000).toISOString() // 90 minutes from now
             : null
         })
-        .eq('table_number', selectedTable.table_number);
+        .eq('table_id', selectedTable.table_id);
 
       if (error) throw error;
 
@@ -161,7 +161,6 @@ const TableStatusPage = () => {
 
   const getTableImage = (capacity: number, status: string) => {
     const baseClass = "h-16 w-16 mx-auto mb-2";
-    
     // Different table styles based on capacity
     if (capacity <= 2) {
       return (
@@ -290,7 +289,7 @@ const TableStatusPage = () => {
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h3 className={`text-lg font-bold ${getStatusTextColor(table.status)}`}>
-                        Table {table.table_number}
+                        Table {table.table_id}
                       </h3>
                       <span className={`text-xs font-medium px-2 py-1 rounded-full ${getStatusColor(table.status)} ${getStatusTextColor(table.status)}`}>
                         {table.status.charAt(0).toUpperCase() + table.status.slice(1)}
@@ -353,7 +352,7 @@ const TableStatusPage = () => {
                   {tableList ? (
                     tableList.map(table => (
                       <tr key={table.id} className="hover:bg-gray-50">
-                        <td className="border p-2">{table.table_number}</td>
+                        <td className="border p-2">{table.table_id}</td>
                         <td className="border p-2">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(table.status)} ${getStatusTextColor(table.status)}`}>
                             {table.status.charAt(0).toUpperCase() + table.status.slice(1)}
@@ -403,10 +402,10 @@ const TableStatusPage = () => {
           <div className="bg-white p-6 rounded-lg w-96">
             <div className="flex items-center gap-3 mb-4">
               <div className={`flex items-center justify-center h-16 w-16 border-4 rounded-lg ${getStatusColor(selectedTable.status)}`}>
-                <span className={`font-bold text-xl ${getStatusTextColor(selectedTable.status)}`}>{selectedTable.table_number}</span>
+                <span className={`font-bold text-xl ${getStatusTextColor(selectedTable.status)}`}>{selectedTable.table_id}</span>
               </div>
               <div>
-                <h2 className="text-xl font-bold">Table {selectedTable.table_number}</h2>
+                <h2 className="text-xl font-bold">Table {selectedTable.table_id}</h2>
                 <p className="text-gray-600">Capacity: {selectedTable.capacity} guests</p>
               </div>
             </div>
